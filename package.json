@@ -9,6 +9,7 @@
     ],
     "scripts": {
         "dev": "vite public",
+        "start":"vite public",
         "prebuild": "npm run lint && npm run fmt && rimraf dist",
         "build": "vite build && npm run build:lib",
         "build:watch": "vite build --watch && npm run build:lib:watch",
