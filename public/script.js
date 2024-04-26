@@ -671,90 +671,98 @@ const runHolistic = async () => {
 
 // Chama a função para rodar
 runHolistic();*/
+let lista = [];
+lista.push('dados.json');
+lista.push('exercicio2.json');
 
-const runHolistic = async () => {
+const runHolistic = async (listaExercicios) => {
     await holisticAvatarAuxiliar.initialize();
+    for(let i = 0; i < listaExercicios.length; i++){
+        const urlArquivo1 = listaExercicios[i];
+        let tempoRestante = 20;
+        
+        console.log(listaExercicios[i], tempoRestante);
+        
+        // Função para ler o arquivo
+        const lerArquivo = async (urlArquivo1) => {
+            try {
+                // Faz uma requisição GET para obter o conteúdo do arquivo
+                const response = await fetch(urlArquivo1);
 
-    const urlArquivo1 = 'dados.json';
+                // Verifica se a requisição foi bem sucedida
+                if (!response.ok) {
+                    throw new Error('Erro ao ler o arquivo');
+                }
 
-    // Função para ler o arquivo
-    const lerArquivo = async (url) => {
-        try {
-            // Faz uma requisição GET para obter o conteúdo do arquivo
-            const response = await fetch(url);
+                // Converte o conteúdo do arquivo para JSON
+                const conteudo = await response.json();
 
-            // Verifica se a requisição foi bem sucedida
-            if (!response.ok) {
-                throw new Error('Erro ao ler o arquivo');
+                // Função para iterar sobre os objetos com atraso
+                for (const objeto of conteudo) {
+                    // Chama a função com o objeto atual
+                    animateVRMAvatarAuxiliar(avatarAuxiliar, objeto);
+
+                    // Aguarda um tempo antes de continuar para a próxima iteração
+                    await new Promise(resolve => setTimeout(resolve, 10)); // Aguarda 10 milissegundos
+                }
+            } catch (error) {
+                console.error('Erro ao ler o arquivo:', error);
+            }
+        };
+
+        // Função para ler o arquivo por 10 segundos
+        const lerArquivoPor10Segundos = async (urlArquivo1) => {
+            // Tempo inicial
+            const startTime = Date.now();
+
+            // Loop de repetição para ler o arquivo por 10 segundos
+            while (true) { // Loop infinito
+                const elapsedTime = Date.now() - startTime; // Tempo decorrido desde o início
+                if (elapsedTime >= 20000) { // Se já passaram 10 segundos, interrompe o loop
+                    break;
+                }
+
+                await lerArquivo(urlArquivo1); // Chama a função para ler o arquivo
             }
 
-            // Converte o conteúdo do arquivo para JSON
-            const conteudo = await response.json();
+            // Quando o tempo acabar, exibe um alerta
+            alert("Tempo esgotado!");
+        };
 
-            // Função para iterar sobre os objetos com atraso
-            for (const objeto of conteudo) {
-                // Chama a função com o objeto atual
-                animateVRMAvatarAuxiliar(avatarAuxiliar, objeto);
+        // Função para atualizar o contador na tela
+        const atualizarContador = (tempoRestante) => {
+            document.getElementById("contador").textContent = `Tempo restante: ${tempoRestante} segundos`;
+        };
 
-                // Aguarda um tempo antes de continuar para a próxima iteração
-                await new Promise(resolve => setTimeout(resolve, 50)); // Aguarda 50 milissegundos
-            }
-        } catch (error) {
-            console.error('Erro ao ler o arquivo:', error);
-        }
-    };
-
-    // Função para ler o arquivo por 10 segundos
-    const lerArquivoPor10Segundos = async (url) => {
-        // Tempo inicial
-        const startTime = Date.now();
-
-        // Loop de repetição para ler o arquivo por 10 segundos
-        while (true) { // Loop infinito
-            const elapsedTime = Date.now() - startTime; // Tempo decorrido desde o início
-            if (elapsedTime >= 60000) { // Se já passaram 10 segundos, interrompe o loop
-                break;
-            }
-
-            await lerArquivo(url); // Chama a função para ler o arquivo
-        }
-
-        // Quando o tempo acabar, exibe um alerta
-        alert("Tempo esgotado!");
-    };
-
-    // Função para atualizar o contador na tela
-    const atualizarContador = (tempoRestante) => {
-        document.getElementById("contador").textContent = `Tempo restante: ${tempoRestante} segundos`;
-    };
-
-    // Função para executar o contador
-    const executarContador = () => {
-        let tempoRestante = 60; // Tempo inicial em segundos
-        atualizarContador(tempoRestante); // Atualiza o contador na tela
-
-        // Intervalo para decrementar o tempo restante a cada segundo
-        const intervalo = setInterval(() => {
-            tempoRestante--; // Decrementa o tempo restante
+        // Função para executar o contador
+        const executarContador = async () => {
+            // Tempo inicial em segundos
             atualizarContador(tempoRestante); // Atualiza o contador na tela
 
-            if (tempoRestante <= 0) { // Se o tempo acabou
-                //alert("acabou o tempo!!!")
-                clearInterval(intervalo); // Interrompe o intervalo
-                
-            }
-        }, 1000); // 1 segundo
+            // Intervalo para decrementar o tempo restante a cada segundo
+            const intervalo = setInterval(() => {
+                tempoRestante--; // Decrementa o tempo restante
+                atualizarContador(tempoRestante); // Atualiza o contador na tela
 
-        // Chama a função para ler o arquivo por 10 segundos
-        lerArquivoPor10Segundos(urlArquivo1);
-    };
+                if (tempoRestante <= 0) { // Se o tempo acabou
+                    clearInterval(intervalo); // Interrompe o intervalo
+                }
+            }, 1000); // 1 segundo
 
-    // Inicia a execução do contador
-    executarContador();
+            // Chama a função para ler o arquivo por 10 segundos
+            await lerArquivoPor10Segundos(urlArquivo1);
+        };
+
+        // Inicia a execução do contador
+        await executarContador();
+    }
 };
 
 // Chama a função principal
-runHolistic();
+runHolistic(lista);
+
+
+
 
 
 
