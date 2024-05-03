@@ -1,11 +1,33 @@
 const path = require("path");
 const { defineConfig } = require("vite");
-import Banner from "vite-plugin-banner";
-import pkg from "./package.json";
-import friendlyTypeImports from "rollup-plugin-friendly-type-imports";
-import { resolve } from "path";
+const Koa = require('koa');
+const cors = require('@koa/cors');
+const Banner = require("vite-plugin-banner");
+const pkg = require("./package.json");
+const friendlyTypeImports = require("rollup-plugin-friendly-type-imports");
+
+const app = new Koa();
+
+app.use(cors()); // Adicionando o middleware CORS ao app Koa
+
 module.exports = defineConfig({
     base: "./",
+    server: {
+        middlewareMode: true,
+        async start() {
+            // Use a middleware to handle requests in Vite
+            app.use(async (ctx, next) => {
+                await next();
+                ctx.body = "Hello Vite!";
+            });
+
+            // Start the server
+            const server = app.listen(3000);
+            return () => {
+                server.close();
+            };
+        },
+    },
     build: {
         lib: {
             entry: path.resolve(__dirname, "src/index.ts"),
@@ -26,7 +48,7 @@ module.exports = defineConfig({
     },
     plugins: [
         Banner(
-            `/**\n * @${pkg.name} v${pkg.version}\n * ${pkg.description}\n * \n * @license\n * Copyright (c) ${pkg.year} ${pkg.author}\n * SPDX-License-Idntifier: ${pkg.license} \n * ${pkg.homepage}\n */`
+            `/**\n * @${pkg.name} v${pkg.version}\n * ${pkg.description}\n * \n * @license\n * Copyright (c) ${pkg.year} ${pkg.author}\n * SPDX-License-Identifier: ${pkg.license} \n * ${pkg.homepage}\n */`
         ),
         friendlyTypeImports(),
     ],

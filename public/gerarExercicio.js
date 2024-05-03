@@ -345,26 +345,26 @@ const drawResults = (results) => {
         lineWidth: 2,
     });
 };
-
+let file
+let videoURL
 const videoElementAvatar = document.createElement('video');
 videoElementAvatar.src = 'teste.mp4'; // Defina o caminho do seu arquivo de vídeo
 videoElementAvatar.autoplay = true;
-videoElementAvatar.loop = true; // Define para repetir o vídeo
+videoElementAvatar.loop = false; // Define para repetir o vídeo
+let start = 0
+let end = 100
 
 
-// Modifique a função runHolistic para receber o arquivo de vídeo como parâmetro
-const runHolistic = async (videoFile) => {
+
+const runHolistic = async (videoFile, startPercentage = 0, endPercentage = 0) => {
     await holistic.initialize();
-
+    videoElementAvatar.play()
     let tempoRestante = 10; // Tempo inicial em segundos
 
-    // Função para atualizar o contador na tela
-    const atualizarContador = () => {
-        document.getElementById("contador").textContent = `Tempo restante: ${tempoRestante} segundos`;
-    };
 
     // Função para processar quadros do vídeo e enviar para o modelo
     const processVideo = async () => {
+
         if (videoElementAvatar.paused || videoElementAvatar.ended) return;
         await holistic.send({ image: videoElementAvatar });
         requestAnimationFrame(processVideo);
@@ -374,34 +374,64 @@ const runHolistic = async (videoFile) => {
     const decrementarTempo = () => {
         if (tempoRestante > 0) {
             tempoRestante--;
-            atualizarContador();
         } else {
-            alert("Tempo esgotado!");
-            salvarDadosEmArquivo(dadosArquivo, "dados.json");
-            clearInterval(intervalo);
+
         }
     };
 
     // Configura um temporizador para decrementar o tempo restante a cada segundo
     processVideo();
-    let intervalo = setInterval(decrementarTempo,1000);
+    let intervalo = setInterval(decrementarTempo, 1000);
+
+    // Cria um elemento de vídeo temporário para calcular a duração
+    const tempVideo = document.createElement('video');
+    tempVideo.src = videoURL;
+
+    // Espera que os metadados do vídeo sejam carregados para calcular a duração
+    tempVideo.addEventListener('loadedmetadata', () => {
+        start = tempVideo.duration * (startPercentage / 100);
+        end = tempVideo.duration - (tempVideo.duration * (endPercentage / 100));
+
+        // Define o tempo inicial e final do vídeo para cortar
+        videoElementAvatar.currentTime = start;
+
+        // Evento para parar o vídeo no tempo final definido
+        videoElementAvatar.onended = () => {
+            videoElementAvatar.currentTime = end;
+            videoElementAvatar.pause();
+        };
+    });
+
+
 };
 
+
 // Modifique a função handleFileSelect para passar o arquivo de vídeo para runHolistic
-const handleFileSelect = (event) => {
-    const file = event.target.files[0];
+const handleFileSelect = () => {
+
     if (file && file.type === 'video/mp4') {
-        const videoURL = URL.createObjectURL(file);
-        videoElementAvatar.src = videoURL;
-        runHolistic(file); // Passa o arquivo de vídeo para a função runHolistic
+        const startTime = parseFloat(document.getElementById('sliderStart').value);
+        const endTime = parseFloat(document.getElementById('sliderEnd').value);
+        runHolistic(file, startTime, endTime);
     } else {
         alert('Por favor, selecione um arquivo de vídeo MP4.');
     }
 };
 
-// Adiciona um ouvinte de eventos para o evento change do campo de entrada de arquivo
-document.getElementById('customFile').addEventListener('change', handleFileSelect);
 
+function carregaArq(event) {
+    file = event.target.files[0];
+    videoURL = URL.createObjectURL(file);
+    videoElementAvatar.src = videoURL;
+    console.log(videoURL)
+}
+
+// Adiciona um ouvinte de eventos para o evento change do campo de entrada de arquivo
+document.getElementById('customFile').addEventListener('change', carregaArq);
+
+
+// Event listener para o botão de play
+document.getElementById('btnPlay').addEventListener('click', handleFileSelect);
 
 
 
