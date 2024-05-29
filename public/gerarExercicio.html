@@ -83,7 +83,11 @@
     </div>
 
     <div class="preview">
+        <video class="input_video" width="320px" height="320px" hidden="true"></video>
         <canvas class="guides"></canvas>
+        <section>
+            <a class="current" href="/"><p>VRM</p></a>  
+        </section>
     </div>
 
     <!-- Botão de play -->
@@ -112,15 +116,9 @@
             let startTime = 0;
             let endTime = 100;
 
-            // Exibir campo de arquivo ao clicar em "Utilizar Arquivo"
-            btnArquivo.addEventListener('click', function () {
-                customFileInput.style.display = 'block';
-            });
+            
 
-            // Ocultar campo de arquivo ao clicar em "Capturar com a Câmera"
-            btnCapturar.addEventListener('click', function () {
-                customFileInput.style.display = 'none';
-            });
+            
 
             // Slider para marcar início e fim do vídeo
             sliderStart.addEventListener('input', function() {

@@ -672,7 +672,7 @@ const runHolistic = async () => {
 // Chama a função para rodar
 runHolistic();*/
 let lista = [];
-lista.push('dados.json');
+lista.push('gravando.json');
 lista.push('exercicio2.json');
 
 const runHolistic = async (listaExercicios) => {

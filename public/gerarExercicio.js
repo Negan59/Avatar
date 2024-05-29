@@ -19,12 +19,22 @@ document.body.appendChild(renderer.domElement);
 
 // camera
 const orbitCamera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
-orbitCamera.position.set(0.0, 0.6, 4);
+orbitCamera.position.set(0.0, 1.3, 6);
+orbitCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
 
 
 // scene
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x8B4513); // Marrom como cor de fundo
+
+// Criando um plano (chão)
+const groundGeometry = new THREE.PlaneGeometry(10, 10); // Dimensões do plano
+const groundMaterial = new THREE.MeshBasicMaterial({ color: 0x996633 }); // Marrom claro como cor do chão
+const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+ground.rotation.x = -Math.PI / 2; // Rotaciona o plano para que ele fique no chão
+scene.add(ground);
+
 
 // light
 const light = new THREE.DirectionalLight(0xffffff);
@@ -276,10 +286,135 @@ let videoElement = document.querySelector(".input_video"),
     guideCanvas = document.querySelector("canvas.guides");
 
 
+// Variables for T-pose detection and video recording
+let isTPoseDetected = false;
+let recordingStarted = false;
+let recordingData = [];
+let timerInterval;
+let countdown = 3;
+let file
 
+// Function to detect T-pose
+const isArmsDownPose = (poseLandmarks) => {
+    if (!poseLandmarks) return false;
+
+    const leftWrist = poseLandmarks[15];
+    const rightWrist = poseLandmarks[16];
+    const leftShoulder = poseLandmarks[11];
+    const rightShoulder = poseLandmarks[12];
+    const leftElbow = poseLandmarks[13];
+    const rightElbow = poseLandmarks[14];
+
+    // Check if wrists are roughly at the same vertical position as elbows and close to the torso
+    const isLeftArmDown = Math.abs(leftWrist.y - leftElbow.y) < 0.1 && Math.abs(leftWrist.x - leftShoulder.x) < 0.1;
+    const isRightArmDown = Math.abs(rightWrist.y - rightElbow.y) < 0.1 && Math.abs(rightWrist.x - rightShoulder.x) < 0.1;
+
+    return isLeftArmDown && isRightArmDown;
+};
+
+
+// Function to handle results from Mediapipe Holistic
 const onResults = (results) => {
-    // Animate model
-    animateVRM(currentVrm, results);
+    drawResults(results);
+    animateVRM(currentVrm,results)
+    if (!recordingStarted) {
+        if (isArmsDownPose(results.poseLandmarks)) {
+            if (!isTPoseDetected) {
+                isTPoseDetected = true;
+                startCountdown();
+            }
+        } else {
+            isTPoseDetected = false;
+            resetCountdown();
+        }
+    } else {
+        recordingData.push(results);
+        if (recordingData.length >= 150) {
+            stopRecording();
+        }
+    }
+};
+
+// Function to start countdown before recording
+const startCountdown = () => {
+    countdown = 3;
+    timerInterval = setInterval(() => {
+        console.log(`Recording starts in ${countdown}`);
+        if (countdown <= 0) {
+            clearInterval(timerInterval);
+            startRecording();
+        }
+        countdown--;
+    }, 1000);
+};
+
+// Function to reset countdown
+const resetCountdown = () => {
+    clearInterval(timerInterval);
+};
+
+// Function to start recording
+const startRecording = () => {
+    console.log("Recording started");
+    recordingStarted = true;
+    recordingData = [];
+};
+
+// Function to stop recording
+const stopRecording = () => {
+    console.log("Recording stopped");
+    recordingStarted = false;
+    salvarDadosEmArquivo(recordingData, "recording.json");
+    // Optionally, process the recording data to create a video
+    // processRecordingData(recordingData);
+};
+
+// Draw landmarks and connect them
+const drawResults = (results) => {
+    guideCanvas.width = videoElement.videoWidth;
+    guideCanvas.height = videoElement.videoHeight;
+
+    const canvasCtx = guideCanvas.getContext("2d");
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
+
+    // Use `Mediapipe` drawing functions
+    drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+        color: "#00FF00",
+        lineWidth: 4,
+    });
+    drawLandmarks(canvasCtx, results.poseLandmarks, {
+        color: "#FF0000",
+        lineWidth: 2,
+    });
+    drawConnectors(canvasCtx, results.faceLandmarks, FACEMESH_TESSELATION, {
+        color: "#C0C0C070",
+        lineWidth: 1,
+    });
+    if (results.faceLandmarks && results.faceLandmarks.length === 478) {
+        //draw pupils
+        drawLandmarks(canvasCtx, [results.faceLandmarks[468], results.faceLandmarks[468 + 5]], {
+            color: "#FFE603",
+            lineWidth: 2,
+        });
+    }
+    drawConnectors(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, {
+        color: "#FF0000",
+        lineWidth: 5,
+    });
+    drawLandmarks(canvasCtx, results.leftHandLandmarks, {
+        color: "#00FF00",
+        lineWidth: 2,
+    });
+    drawConnectors(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, {
+        color: "#00FF00",
+        lineWidth: 5,
+    });
+    drawLandmarks(canvasCtx, results.rightHandLandmarks, {
+        color: "#FF0000",
+        lineWidth: 2,
+    });
+    canvasCtx.restore();
 };
 
 const holistic = new Holistic({
@@ -302,50 +437,7 @@ holistic.setOptions({
 // Pass holistic a callback function
 holistic.onResults(onResults);
 
-const drawResults = (results) => {
-    guideCanvas.width = videoElement.videoWidth;
-    guideCanvas.height = videoElement.videoHeight;
-    let canvasCtx = guideCanvas.getContext("2d");
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
-    // Use `Mediapipe` drawing functions
-    drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
-        color: "#00cff7",
-        lineWidth: 4,
-    });
-    drawLandmarks(canvasCtx, results.poseLandmarks, {
-        color: "#ff0364",
-        lineWidth: 2,
-    });
-    drawConnectors(canvasCtx, results.faceLandmarks, FACEMESH_TESSELATION, {
-        color: "#C0C0C070",
-        lineWidth: 1,
-    });
-    if (results.faceLandmarks && results.faceLandmarks.length === 478) {
-        //draw pupils
-        drawLandmarks(canvasCtx, [results.faceLandmarks[468], results.faceLandmarks[468 + 5]], {
-            color: "#ffe603",
-            lineWidth: 2,
-        });
-    }
-    drawConnectors(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, {
-        color: "#eb1064",
-        lineWidth: 5,
-    });
-    drawLandmarks(canvasCtx, results.leftHandLandmarks, {
-        color: "#00cff7",
-        lineWidth: 2,
-    });
-    drawConnectors(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, {
-        color: "#22c3e3",
-        lineWidth: 5,
-    });
-    drawLandmarks(canvasCtx, results.rightHandLandmarks, {
-        color: "#ff0364",
-        lineWidth: 2,
-    });
-};
-let file
+
 let videoURL
 const videoElementAvatar = document.createElement('video');
 videoElementAvatar.src = 'teste.mp4'; // Defina o caminho do seu arquivo de vídeo
@@ -435,3 +527,26 @@ document.getElementById('btnPlay').addEventListener('click', handleFileSelect);
 
 
 
+// Use `Mediapipe` utils to get camera - lower resolution = higher fps
+const camera = new Camera(videoElement, {
+    onFrame: async () => {
+        await holistic.send({ image: videoElement });
+    },
+    width: 480,
+    height: 320,
+});
+
+// Ocultar campo de arquivo ao clicar em "Capturar com a Câmera"
+btnCapturar.addEventListener('click', function () {
+    // Exibe o elemento de vídeo ao clicar em "Capturar com a Câmera"
+    document.querySelector('.input_video').removeAttribute('hidden');
+    customFileInput.style.display = 'none'; // Esconde o campo de arquivo, se estiver visível
+    camera.start()
+});
+
+// Exibir campo de arquivo ao clicar em "Utilizar Arquivo"
+btnArquivo.addEventListener('click', function () {
+    customFileInput.style.display = 'block';
+    camera.stop();
+    document.querySelector('.input_video').setAttribute('hidden', 'true');
+});
