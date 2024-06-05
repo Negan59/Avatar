@@ -1,0 +1,43 @@
+/* src/App.css */
+
+.App {
+    display: flex;
+  }
+  
+  /* Estilos para quando o menu está recolhido */
+  .App.collapsed {
+    .ant-layout-sider {
+      width: 80px;
+    }
+    .ant-menu-item {
+      padding: 0 !important;
+      span {
+        display: none;
+      }
+    }
+    .ant-menu-item-selected {
+      width: 100%;
+    }
+    .ant-layout-content {
+      margin-left: 80px;
+      transition: margin-left 0.3s;
+    }
+  }
+  
+  /* Estilos para quando o menu está expandido */
+  .App:not(.collapsed) {
+    .ant-layout-sider {
+      width: 200px;
+    }
+    .ant-menu-item {
+      padding: 0 24px !important;
+      span {
+        display: inline-block;
+      }
+    }
+    .ant-layout-content {
+      margin-left: 200px;
+      transition: margin-left 0.3s;
+    }
+  }
+  

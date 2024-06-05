@@ -1,0 +1,15 @@
+.header {
+    background-color: #001529;
+    color: white;
+    text-align: center;
+    padding: 16px 0;
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+  }
+  
+  .content {
+    padding-top: 64px; /* Altura do cabeçalho (ajustar conforme necessário) */
+    padding: 24px;
+  }
+  

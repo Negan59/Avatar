@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <title>VRM Exercício</title>
+   
+    <!-- Basic Three.js -->
+    <script src="https://unpkg.com/three@0.133.0/build/three.js"></script>
+    <!-- GLTF Loader for Three.js -->
+    <script src="https://unpkg.com/three@0.133.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Orbit Controls for Three.js -->
+    <script src="https://unpkg.com/three@0.133.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- VRM Loader for Three.js -->
+    <script src="https://unpkg.com/@pixiv/three-vrm@0.6.7/lib/three-vrm.js"></script>
+    <!-- Mediapipe or Tensorflow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1635989137/holistic.js" crossorigin="anonymous"></script>
+    <!-- Mediapipe Drawing Tools -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <!-- Mediapipe Camera Tools -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Seu arquivo CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Video.js -->
+    <link href="https://vjs.zencdn.net/7.16.0/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.16.0/video.js"></script>
+    <!-- videojs-offset -->
+    <script src="https://unpkg.com/videojs-offset@1.1.0/dist/videojs-offset.js"></script>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <img id="loadingGif" src="" style="display: none;" />
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label for="nomeExercicio">Nome do Exercício</label>
+                    <input type="text" id="nomeExercicio" class="form-control" placeholder="Digite o nome do exercício">
+                </div>
+                <div class="form-group">
+                    <label for="grauExercicio">Grau do Exercício</label>
+                    <select id="grauExercicio" class="form-control">
+                        <option value="1">Grau 1</option>
+                        <option value="2">Grau 2</option>
+                        <option value="3">Grau 3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tipoExercicio">Tipo do Exercício</label>
+                    <select id="tipoExercicio" class="form-control">
+                        <option value="1">Tipo 1</option>
+                        <option value="2">Tipo 2</option>
+                        <option value="3">Tipo 3</option>
+                    </select>
+                </div>
+                <div class="btn-group mb-3" role="group" aria-label="Exemplo básico">
+                    <!-- Botão de Utilizar Arquivo -->
+                    <button type="button" id="btnArquivo" class="btn btn-info">
+                        <i class="fas fa-file"></i> Utilizar Arquivo
+                    </button>
+                    <!-- Botão de Capturar com a Câmera -->
+                    <button type="button" id="btnCapturar" class="btn btn-success">
+                        <i class="fas fa-camera"></i> Capturar com a Câmera
+                    </button>
+                </div>
+                <!-- Botão de Play -->
+                <button type="button" id="btnPlay" class="btn btn-primary mb-3">
+                    <i class="fas fa-play"></i> Play
+                </button>
+                <!-- Botão de Salvar -->
+                <button type="button" id="btnSalvar" class="btn btn-danger mb-3">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline do Vídeo -->
+    <div id="timelineVideo" class="container mt-3">
+        <!-- Aqui será exibida a timeline do vídeo -->
+        <input type="range" id="sliderStart" min="0" max="100" step="0.01" value="0" class="form-control-range">
+        <input type="range" id="sliderEnd" min="0" max="100" step="0.01" value="100" class="form-control-range">
+    </div>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <!-- Input de arquivo Bootstrap -->
+                <div class="custom-file" id="customFileInput" style="display: none;">
+                    <input type="file" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Escolher arquivo</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="preview">
+        <video class="input_video" width="320px" height="320px" hidden="true"></video>
+        <canvas class="guides"></canvas>
+        <section>
+            <a class="current" href="/"><p>VRM</p></a>  
+        </section>
+    </div>
+    
+    <!-- Adicionando elemento de cronômetro -->
+    <div id="cronometro" style="display: none; text-align: center; font-size: 72px; color: red;">3</div>
+    
+    <!-- Bootstrap JS e dependências -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <!-- Seu JS -->
+    <script src="./gerarExercicio.js" type="module" defer></script>
+</body>
+</html>

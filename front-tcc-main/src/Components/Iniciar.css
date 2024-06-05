@@ -1,0 +1,23 @@
+/* Iniciar.css */
+
+.iniciar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(45deg, #0c0c31, #af4261); /* Cor de fundo */
+    color: white; /* Cor do texto */
+    text-align: center;
+  }
+  
+  .iniciar-p {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .iniciar-canvas {
+    width: 100%;
+    height: 100%;
+  }
+  
