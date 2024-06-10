@@ -1,5 +1,7 @@
 package com.sgpd.model;
 
+import java.util.List;
+
 import com.sgpd.dao.DAOExercicio;
 
 public class Exercicio {
@@ -49,5 +51,15 @@ public class Exercicio {
         else{
             return new Erro("erro", true, 500);
         }
+    }
+
+    public Exercicio buscar(long id){
+        DAOExercicio dao = new DAOExercicio();
+        return dao.buscar(id);
+    }
+
+    public List<Exercicio> buscarTodos(){
+        DAOExercicio dao = new DAOExercicio();
+        return dao.buscarTodos();
     }
 }

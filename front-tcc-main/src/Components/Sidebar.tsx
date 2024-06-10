@@ -7,7 +7,8 @@ import {
   PlayCircleOutlined,
   UserOutlined,
   TeamOutlined,
-  PlusCircleOutlined, // Importe o ícone PlusCircleOutlined
+  PlusCircleOutlined,
+  EyeFilled, // Importe o ícone PlusCircleOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
@@ -50,15 +51,15 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false }) => {
         <Menu.Item key="admin" icon={<ControlOutlined />}>
           <Link to="/adm">Painel do Administrador</Link>
         </Menu.Item>
-        <Menu.Item key="session" icon={<PlayCircleOutlined />}>
-          Sessão
-        </Menu.Item>
-        <Menu.Item key="start" icon={<PlayCircleOutlined />}>
-          <Link to="/animation">Iniciar</Link>
+        <Menu.Item key="session" icon={<EyeFilled />}>
+        <Link to="/exibir-sessao">Exibir Sessão</Link>
         </Menu.Item>
         {/* Elemento "Criar Exercício" com ícone */}
         <Menu.Item key="create-exercise" icon={<PlusCircleOutlined />}>
           <Link to="/criar-exercicio">Criar Exercício</Link>
+        </Menu.Item>
+        <Menu.Item key="create-session" icon={<PlusCircleOutlined />}>
+          <Link to="/criar-sessao">Criar Sessão</Link>
         </Menu.Item>
       </Menu>
     </Sider>

@@ -93,7 +93,7 @@ loader.load(
 
 
 // Animate Rotation Helper function
-const rigRotation = (name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.7) => {
+const rigRotation = (name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
     if (!currentVrm) {
         return;
     }
@@ -113,7 +113,7 @@ const rigRotation = (name, rotation = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAm
 };
 
 // Animate Position Helper Function
-const rigPosition = (name, position = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.7) => {
+const rigPosition = (name, position = { x: 0, y: 0, z: 0 }, dampener = 1, lerpAmount = 0.3) => {
     if (!currentVrm) {
         return;
     }
@@ -162,13 +162,11 @@ const rigFace = (riggedFace) => {
     currentVrm.lookAt.applyer.lookAt(lookTarget);
 };
 
-
 /* VRM Character Animator */
 const animateVRM = (vrm, results) => {
     if (!vrm) {
         return;
     }
-
     // Take the results from `Holistic` and animate character based on its Face, Pose, and Hand Keypoints.
     let riggedPose, riggedLeftHand, riggedRightHand, riggedFace;
 
@@ -177,14 +175,21 @@ const animateVRM = (vrm, results) => {
     const pose3DLandmarks = results.ea;
     // Pose 2D landmarks are with respect to videoWidth and videoHeight
     const pose2DLandmarks = results.poseLandmarks;
+    // Be careful, hand landmarks may be reversed
+    const leftHandLandmarks = results.rightHandLandmarks;
+    const rightHandLandmarks = results.leftHandLandmarks; 
 
+    // Animate Face
+    if (faceLandmarks) {
+        riggedFace = Kalidokit.Face.solve(faceLandmarks, {
+            runtime: "mediapipe",
+            video: videoElement,
+        });
+        rigFace(riggedFace);
+    }
 
     // Animate Pose
     if (pose2DLandmarks && pose3DLandmarks) {
-        if(salvando){
-            dadosArquivo.push(results)
-            console.log(dadosArquivo)
-        }
         riggedPose = Kalidokit.Pose.solve(pose3DLandmarks, pose2DLandmarks, {
             runtime: "mediapipe",
             video: videoElement,
@@ -201,22 +206,23 @@ const animateVRM = (vrm, results) => {
             0.07
         );
 
-        rigRotation("Chest", riggedPose.Spine, 0.4, 0.3);
-        rigRotation("Spine", riggedPose.Spine, 0.6, 0.5);
+        rigRotation("Chest", riggedPose.Spine, 0.25, 0.3);
+        rigRotation("Spine", riggedPose.Spine, 0.45, 0.3);
 
-        rigRotation("RightUpperArm", riggedPose.RightUpperArm, 1, 0.5);
-        rigRotation("RightLowerArm", riggedPose.RightLowerArm, 1, 0.5);
-        rigRotation("LeftUpperArm", riggedPose.LeftUpperArm, 1, 0.5);
-        rigRotation("LeftLowerArm", riggedPose.LeftLowerArm, 1, 0.5);
+        rigRotation("RightUpperArm", riggedPose.RightUpperArm, 1, 0.3);
+        rigRotation("RightLowerArm", riggedPose.RightLowerArm, 1, 0.3);
+        rigRotation("LeftUpperArm", riggedPose.LeftUpperArm, 1, 0.3);
+        rigRotation("LeftLowerArm", riggedPose.LeftLowerArm, 1, 0.3);
 
-        rigRotation("LeftUpperLeg", riggedPose.LeftUpperLeg, 1, 0.5);
-        rigRotation("LeftLowerLeg", riggedPose.LeftLowerLeg, 1, 0.5);
-        rigRotation("RightUpperLeg", riggedPose.RightUpperLeg, 1, 0.5);
-        rigRotation("RightLowerLeg", riggedPose.RightLowerLeg, 1, 0.5);
+        rigRotation("LeftUpperLeg", riggedPose.LeftUpperLeg, 1, 0.3);
+        rigRotation("LeftLowerLeg", riggedPose.LeftLowerLeg, 1, 0.3);
+        rigRotation("RightUpperLeg", riggedPose.RightUpperLeg, 1, 0.3);
+        rigRotation("RightLowerLeg", riggedPose.RightLowerLeg, 1, 0.3);
     }
 
-    
 };
+
+
 
 const salvarDadosEmArquivo = (dados, nomeArquivo) => {
     const dadosJSON = JSON.stringify(dados);

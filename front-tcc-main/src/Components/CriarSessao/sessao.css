@@ -1,0 +1,18 @@
+.exercise-item {
+    border: 1px solid #e8e8e8;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #fafafa;
+}
+.btn-green {
+    background-color: #52c41a;
+    border-color: #52c41a;
+    color: #fff;
+    margin-right: 2px;
+}
+
+.btn-green:hover,
+.btn-green:focus {
+    background-color: #389e0d;
+    border-color: #389e0d;
+}

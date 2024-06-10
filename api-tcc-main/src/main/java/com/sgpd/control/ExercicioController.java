@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Random;
 
 import com.sgpd.model.Erro;
@@ -55,5 +56,15 @@ public class ExercicioController {
             sb.append(CARACTERES_PERMITIDOS.charAt(index));
         }
         return sb.toString();
+    }
+
+    public Exercicio buscar(long id){
+        Exercicio exercicio = new Exercicio();
+        return exercicio.buscar(id);
+    }
+
+    public List<Exercicio>buscarTodos(){
+        Exercicio exercicio = new Exercicio();
+        return exercicio.buscarTodos();
     }
 }

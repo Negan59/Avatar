@@ -9,6 +9,8 @@ import Administrador from './Components/Administrador/Administrador';
 import Perfil from './Components/Perfil/Perfil';
 import Iniciar from './Components/Iniciar';
 import CriarExercicio from './Components/CriarExercicio/CriarExercicio';
+import CriarSessaoFisioterapia from './Components/CriarSessao/Sessao';
+import SessaoList from './Components/CriarSessao/SessaoList';
 
 const { Content } = Layout;
 
@@ -37,6 +39,8 @@ function App() {
               <Route path="/adm" element={<Administrador />} /> {/* Rota para a página de animação */}
               <Route path="/perfil/:pacienteId" element={<Perfil />} />
               <Route path="/criar-exercicio" element={<CriarExercicio />} />
+              <Route path="/criar-sessao" element={<CriarSessaoFisioterapia />} />
+              <Route path="/exibir-sessao" element={<SessaoList />} />
             </Routes>
           </Content>
         </Layout>

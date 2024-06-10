@@ -11,11 +11,17 @@ import com.sgpd.control.ExercicioController;
 import com.sgpd.control.FMSController;
 import com.sgpd.control.MonitorController;
 import com.sgpd.control.PacienteController;
+import com.sgpd.control.SessaoController;
+import com.sgpd.control.SessaoExercicioController;
 import com.sgpd.model.Erro;
 import com.sgpd.model.Exercicio;
 import com.sgpd.model.FMS;
 import com.sgpd.model.Monitor;
 import com.sgpd.model.Paciente;
+import com.sgpd.model.Sessao;
+import com.sgpd.model.SessaoExercicio;
+
+
 
 @CrossOrigin
 @RestController
@@ -121,4 +127,56 @@ public class Rotas {
     public ResponseEntity<Object> buscarFMS(@PathVariable(value = "id") int id) {
         return new ResponseEntity<>(new FMSController().buscar(id), HttpStatus.OK);
     }
+
+    @GetMapping("/exercicio/{id}")
+    public ResponseEntity<Object> buscarExercicio(@PathVariable("id") long id) {
+        return new ResponseEntity<>(new ExercicioController().buscar(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/exercicio/buscar")
+    public ResponseEntity<Object> buscarExercicioTodos() {
+        return new ResponseEntity<>(new ExercicioController().buscarTodos(), HttpStatus.OK);
+    }
+
+    //sessão
+    @PostMapping("/sessao")
+    public ResponseEntity<Object> SalvarSessao(@RequestBody Sessao sessao) {
+        return new ResponseEntity<>(new SessaoController().salvar(sessao),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/sessao/{id}")
+    public ResponseEntity<Object> ExcluirSessao(@PathVariable("id")int id) {
+        return new ResponseEntity<>(new SessaoController().excluir(id),HttpStatus.OK);
+    }
+    
+    @GetMapping("/sessao/{id}")
+    public ResponseEntity<Object> BuscarSessao(@PathVariable("id")int id) {
+        return new ResponseEntity<>(new SessaoController().buscar(id),HttpStatus.OK);
+    }
+
+    @GetMapping("/sessao")
+    public ResponseEntity<Object> BuscarTodasSessao() {
+        return new ResponseEntity<>(new SessaoController().buscarTodos(),HttpStatus.OK);
+    }
+
+    //sessao do exercicio
+    @PostMapping("/sessaoexercicio")
+    public ResponseEntity<Object> SalvarSessaoExercicio(@RequestBody SessaoExercicio sessao) {
+        return new ResponseEntity<>(new SessaoExercicioController().salvar(sessao),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/sessaoexercicio/{id}")
+    public ResponseEntity<Object> DeletarSessaoExercicio(@PathVariable("id") int id) {
+        return new ResponseEntity<>(new SessaoExercicioController().excluir(id),HttpStatus.OK);
+    }
+
+    @GetMapping("/sessao/ultima")
+    public int buscarUltimo() {
+        return new SessaoController().buscarUl();
+    }
+    
+    
+    
+    
+    
 }

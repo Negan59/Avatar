@@ -451,22 +451,6 @@ const animateVRMAvatarAuxiliar = (vrm, results) => {
     }
 };
 
-const salvarDadosEmArquivo = (dados, nomeArquivo) => {
-    const dadosJSON = JSON.stringify(dados);
-    const blob = new Blob([dadosJSON], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    // Cria um link temporário para o arquivo e faz o download
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = nomeArquivo;
-    link.click();
-
-    // Libera a URL do objeto Blob
-    URL.revokeObjectURL(url);
-};
-
-
 /* SETUP MEDIAPIPE HOLISTIC INSTANCE */
 let videoElement = document.querySelector(".input_video"),
     guideCanvas = document.querySelector("canvas.guides");
