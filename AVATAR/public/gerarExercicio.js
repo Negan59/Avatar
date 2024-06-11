@@ -79,6 +79,7 @@ loader.load(
 
         THREE.VRM.from(gltf).then((vrm) => {
             vrm.scene.position.set(0, fixedYPosition, 0);
+            vrm.scene.scale.set(0.7, 0.7, 0.7);
             scene.add(vrm.scene);
             currentVrm = vrm;
             currentVrm.scene.rotation.y = Math.PI; // Rotate model 180deg to face camera

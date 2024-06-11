@@ -23,12 +23,33 @@ const SessaoList = () => {
     };
 
     const handleStart = (id) => {
-        // Lógica para iniciar a sessão
-        console.log(`Iniciar sessão: ${id}`);
+        // Abre o iframe para iniciar a sessão com o ID fornecido
+        const iframe = document.createElement('iframe');
+        iframe.src = `http://localhost:4000/Sessao.html?id=${id}`;
+        iframe.style.position = 'fixed';
+        iframe.style.top = '0';
+        iframe.style.left = '0';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        iframe.style.zIndex = '9999';
+        iframe.allow = 'camera'
+        
+        const container = document.createElement('div');
+        container.style.position = 'absolute';
+        container.style.top = '0';
+        container.style.left = '0';
+        container.style.width = '100%';
+        container.style.height = '100%';
+        container.appendChild(iframe);
+
+        document.body.appendChild(container);
     };
 
-    const handleDelete = (id) => {
-        axios.delete(`http://localhost:8080/api/sessao/${id}`)
+    const handleDelete = async (id) => {
+        const response = await axios.delete(`http://localhost:8080/api/sessaoexercicio/${id}`)
+        if(response.data.status == 200){
+            await axios.delete(`http://localhost:8080/api/sessao/${id}`)
             .then(() => {
                 setSessoes(sessoes.filter(sessao => sessao.id !== id));
                 alert('Sessão excluída com sucesso!');
@@ -36,6 +57,11 @@ const SessaoList = () => {
             .catch(error => {
                 console.error('Erro ao excluir sessão:', error);
             });
+        }
+        else{
+            alert("Erro ao excluir")
+        }
+        
     };
 
     // Pagination logic
@@ -45,20 +71,22 @@ const SessaoList = () => {
 
     return (
         <div>
-            {currentSessoes.map(sessao => (
-                <SessaoCard
-                    key={sessao.id}
-                    sessao={sessao}
-                    onStart={handleStart}
-                    onDelete={handleDelete}
-                />
-            ))}
+            <div style={{ marginBottom: '50px' }}>
+                {currentSessoes.map(sessao => (
+                    <SessaoCard
+                        key={sessao.id}
+                        sessao={sessao}
+                        onStart={() => handleStart(sessao.id)} // Passa o id da sessão para handleStart
+                        onDelete={handleDelete}
+                    />
+                ))}
+            </div>
             <Pagination
                 current={currentPage}
                 pageSize={pageSize}
                 total={sessoes.length}
                 onChange={page => setCurrentPage(page)}
-                style={{ textAlign: 'center', marginTop: 20 }}
+                style={{ position: 'fixed', bottom: '0', left: '0', width: '100%' }}
             />
         </div>
     );

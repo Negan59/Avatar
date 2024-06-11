@@ -435,7 +435,7 @@ const partes = arquivo.split('/');
 
 
 
-const relativePath = 'http://192.168.0.103:8082/'+partes[partes.length - 1];
+const relativePath = 'http://localhost:8082/'+partes[partes.length - 1];
 
 console.log(relativePath)
 

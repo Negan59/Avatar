@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   
+    <!-- Basic Three.js -->
+    <script src="https://unpkg.com/three@0.133.0/build/three.js"></script>
+    <!-- GLTF Loader for Three.js -->
+    <script src="https://unpkg.com/three@0.133.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Orbit Controls for Three.js -->
+    <script src="https://unpkg.com/three@0.133.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- VRM Loader for Three.js -->
+    <script src="https://unpkg.com/@pixiv/three-vrm@0.6.7/lib/three-vrm.js"></script>
+    <!-- Mediapipe or Tensorflow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1635989137/holistic.js" crossorigin="anonymous"></script>
+    <!-- Mediapipe Drawing Tools -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <!-- Mediapipe Camera Tools -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Your CSS file -->
+    <link rel="stylesheet" href="style.css" />
+
+      <!-- SweetAlert2 -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            margin-bottom: 16px; /* 80% de 20px */
+        }
+        .counter {
+            font-size: 3.2rem; /* 80% de 4rem */
+            color: #343a40;
+            font-weight: bold;
+            margin: 16px 0; /* 80% de 20px */
+        }
+        .timeline {
+            margin-top: 32px; /* 80% de 40px */
+        }
+        .timeline-item {
+            background: #ffffff;
+            padding: 16px; /* 80% de 20px */
+            margin: 8px; /* 80% de 10px */
+            border-left: 4px solid #007bff; /* 80% de 5px */
+            box-shadow: 0 0.8px 2.4px rgba(0, 0, 0, 0.1); /* 80% de 1px */
+            flex: 1;
+        }
+        .timeline-item.interval {
+            border-left-color: #28a745;
+        }
+        .preview {
+            margin-top: 16px; /* 80% de 20px */
+            text-align: center;
+        }
+        .preview video {
+            width: 256px; /* 80% de 320px */
+            height: 256px; /* 80% de 320px */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-4 pt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <div id="contador" class="counter">00:00</div>
+                <button id="startButton" class="btn btn-primary">Iniciar</button>
+                <button id="resetButton" class="btn btn-secondary">Resetar</button>
+            </div>
+        </div>
+
+        <div class="preview">
+            <video class="input_video" width="256px" height="256px" hidden="true" ></video>
+            <canvas class="guides"></canvas>
+            <section>
+                <a class="current" href="/"><p>VRM</p></a>  
+            </section>
+        </div>
+        <div id="timeline">
+
+        </div>
+    </div>
+
+    <script src="./sessao.js" type="module" defer></script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

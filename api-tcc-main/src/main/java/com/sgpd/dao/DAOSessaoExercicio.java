@@ -1,7 +1,6 @@
 package com.sgpd.dao;
 
 import com.sgpd.model.Exercicio;
-import com.sgpd.model.Sessao;
 import com.sgpd.model.SessaoExercicio;
 import com.sgpd.model.SingletonConexao;
 import java.sql.ResultSet;
@@ -68,7 +67,7 @@ public class DAOSessaoExercicio {
     public List<SessaoExercicio> buscarTodos(int idSessao) {
         List<SessaoExercicio> lista = new ArrayList<>();
         try {
-            String sql = "select * from sessao_exercicio where idsessao = " + idSessao;
+            String sql = "select * from sessao_exercicio where idsessao = " + idSessao + " ORDER BY ordem ASC";
             SingletonConexao con = SingletonConexao.getConexao();
             ResultSet rs = con.consultar(sql);
             while (rs.next()) {
