@@ -168,6 +168,7 @@ const animateVRM = (vrm, results) => {
     if (!vrm) {
         return;
     }
+    dadosArquivo.push(results)
     // Take the results from `Holistic` and animate character based on its Face, Pose, and Hand Keypoints.
     let riggedPose, riggedLeftHand, riggedRightHand, riggedFace;
 

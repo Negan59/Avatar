@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Pagination } from 'antd';
+import { Pagination, Row, Col } from 'antd';
 import axios from 'axios';
 import SessaoCard from './SessaoCard';
 
 const SessaoList = () => {
     const [sessoes, setSessoes] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize] = useState(5); // Number of cards per page
+    const [pageSize] = useState(6); // Número de cards por página
 
     useEffect(() => {
         fetchSessoes();
@@ -33,7 +33,7 @@ const SessaoList = () => {
         iframe.style.height = '100%';
         iframe.style.border = 'none';
         iframe.style.zIndex = '9999';
-        iframe.allow = 'camera'
+        iframe.allow = 'camera';
         
         const container = document.createElement('div');
         container.style.position = 'absolute';
@@ -47,8 +47,8 @@ const SessaoList = () => {
     };
 
     const handleDelete = async (id) => {
-        const response = await axios.delete(`http://localhost:8080/api/sessaoexercicio/${id}`)
-        if(response.data.status == 200){
+        const response = await axios.delete(`http://localhost:8080/api/sessaoexercicio/${id}`);
+        if(response.data.status === 200){
             await axios.delete(`http://localhost:8080/api/sessao/${id}`)
             .then(() => {
                 setSessoes(sessoes.filter(sessao => sessao.id !== id));
@@ -57,36 +57,35 @@ const SessaoList = () => {
             .catch(error => {
                 console.error('Erro ao excluir sessão:', error);
             });
+        } else {
+            alert("Erro ao excluir");
         }
-        else{
-            alert("Erro ao excluir")
-        }
-        
     };
 
-    // Pagination logic
+    // Lógica de paginação
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     const currentSessoes = sessoes.slice(startIndex, endIndex);
 
     return (
         <div>
-            <div style={{ marginBottom: '50px' }}>
+            <Row gutter={[16, 16]} style={{ marginBottom: '50px' }}>
                 {currentSessoes.map(sessao => (
-                    <SessaoCard
-                        key={sessao.id}
-                        sessao={sessao}
-                        onStart={() => handleStart(sessao.id)} // Passa o id da sessão para handleStart
-                        onDelete={handleDelete}
-                    />
+                    <Col key={sessao.id} xs={24} sm={12} md={8}>
+                        <SessaoCard
+                            sessao={sessao}
+                            onStart={() => handleStart(sessao.id)}
+                            onDelete={handleDelete}
+                        />
+                    </Col>
                 ))}
-            </div>
+            </Row>
             <Pagination
                 current={currentPage}
                 pageSize={pageSize}
                 total={sessoes.length}
                 onChange={page => setCurrentPage(page)}
-                style={{ position: 'fixed', bottom: '0', left: '0', width: '100%' }}
+                style={{ textAlign: 'center', marginTop: '16px' }}
             />
         </div>
     );

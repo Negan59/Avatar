@@ -16,11 +16,10 @@ const Administrador: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [qtd, setQtd] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(6); // Número de itens por página
-  const history = useNavigate(); // Obtenha o histórico de navegação
+  const [pageSize, setPageSize] = useState<number>(6);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Chame a função de busca ao montar o componente ou quando a página ou tamanho da página mudar
     buscar();
     contar();
   }, [currentPage, pageSize]);
@@ -39,11 +38,10 @@ const Administrador: React.FC = () => {
   };
 
   const buscar = () => {
-    // Calcule o índice inicial com base na página atual e no tamanho da página
     const startIndex = (currentPage - 1) * pageSize;
     const url = `http://localhost:8080/api/paciente/pag?start=${startIndex}&limit=${pageSize}`;
 
-    setPatients([]); // Limpe os pacientes enquanto busca
+    setPatients([]);
 
     fetch(url)
       .then((response) => response.json())
@@ -60,20 +58,25 @@ const Administrador: React.FC = () => {
   };
 
   const handleVerPerfilClick = (patient: Patient) => {
-    // Navegue para o perfil do paciente usando uma rota e passe o ID do paciente como parte da URL
-    history(`/perfil/${patient.id}`);
+    navigate(`/perfil/${patient.id}`);
   };
 
   return (
     <div>
       <Title level={2}>Pacientes</Title>
-      <Row gutter={16}>
+      <Row gutter={[16, 16]}>
         {patients.map((patient) => (
-          <Col key={patient.id} span={8} style={{ marginBottom: 16 }}>
+          <Col key={patient.id} xs={24} sm={12} md={8}>
             <Card
               hoverable
-              style={{ height: '50%',width:'50%' }} // Defina uma altura fixa para os cards
-              cover={<img alt={patient.nome} src={`${patient.foto}`} style={{ maxHeight: '100%' }} />} // Defina uma altura máxima para a imagem
+              style={{ height: '100%' }}
+              cover={
+                <img
+                  alt={patient.nome}
+                  src={`${patient.foto}`}
+                  style={{ height: '200px', objectFit: 'cover' }}
+                />
+              }
             >
               <Card.Meta
                 title={patient.nome}
@@ -82,7 +85,7 @@ const Administrador: React.FC = () => {
               <Button
                 type="primary"
                 onClick={() => handleVerPerfilClick(patient)}
-                style={{ marginTop: '8px' }} // Adicione uma margem superior ao botão
+                style={{ marginTop: '8px' }}
               >
                 Ver Perfil
               </Button>
@@ -92,9 +95,10 @@ const Administrador: React.FC = () => {
       </Row>
       <Pagination
         current={currentPage}
-        total={qtd} // Substitua pelo número total de pacientes disponíveis
+        total={qtd}
         pageSize={pageSize}
         onChange={handlePageChange}
+        style={{ marginTop: '16px', textAlign: 'center' }}
       />
     </div>
   );
