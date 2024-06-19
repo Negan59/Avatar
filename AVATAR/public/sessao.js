@@ -8,6 +8,7 @@ let dadosArquivo = []
 let lista = [];
 let exerciciosGuarda = []
 let executando = false
+let calibrado = false
 
 let cadeia1 = []
 let cadeia2 = []
@@ -28,7 +29,18 @@ document.body.appendChild(renderer.domElement);
 const orbitCamera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
 orbitCamera.position.set(0.0, 0.6, 4);
 
+const startButton = document.getElementById("startButton");
+startButton.disabled = true
 
+startButton.addEventListener("click", function () {
+    runHolistic(lista);
+});
+
+const calibrateButton = document.getElementById("calibrateButton")
+calibrateButton.addEventListener("click",function(){
+    const cameraExibe = document.getElementById("cameraExibe")
+    cameraExibe.style.display = "flex"
+})
 
 // scene
 const scene = new THREE.Scene();
@@ -249,8 +261,57 @@ const rigFaceAvatarAuxiliar = (riggedFace) => {
     avatarAuxiliar.lookAt.applyer.lookAt(lookTarget);
 };
 
+// Draw landmarks and connect them
+const drawResults = (results) => {
+    guideCanvas.width = videoElement.videoWidth;
+    guideCanvas.height = videoElement.videoHeight;
+
+    const canvasCtx = guideCanvas.getContext("2d");
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
+
+    // Use `Mediapipe` drawing functions
+    drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+        color: "#00FF00",
+        lineWidth: 4,
+    });
+    drawLandmarks(canvasCtx, results.poseLandmarks, {
+        color: "#FF0000",
+        lineWidth: 2,
+    });
+    drawConnectors(canvasCtx, results.faceLandmarks, FACEMESH_TESSELATION, {
+        color: "#C0C0C070",
+        lineWidth: 1,
+    });
+    if (results.faceLandmarks && results.faceLandmarks.length === 478) {
+        //draw pupils
+        drawLandmarks(canvasCtx, [results.faceLandmarks[468], results.faceLandmarks[468 + 5]], {
+            color: "#FFE603",
+            lineWidth: 2,
+        });
+    }
+    drawConnectors(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, {
+        color: "#FF0000",
+        lineWidth: 5,
+    });
+    drawLandmarks(canvasCtx, results.leftHandLandmarks, {
+        color: "#00FF00",
+        lineWidth: 2,
+    });
+    drawConnectors(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, {
+        color: "#00FF00",
+        lineWidth: 5,
+    });
+    drawLandmarks(canvasCtx, results.rightHandLandmarks, {
+        color: "#FF0000",
+        lineWidth: 2,
+    });
+    canvasCtx.restore();
+};
+
 /* VRM Character Animator */
 const animateVRM = (vrm, results) => {
+    drawResults(results);
     if (!vrm) {
         return;
     }
@@ -264,9 +325,46 @@ const animateVRM = (vrm, results) => {
     const pose2DLandmarks = results.poseLandmarks;
     // Be careful, hand landmarks may be reversed
     const leftHandLandmarks = results.rightHandLandmarks;
-    const rightHandLandmarks = results.leftHandLandmarks; 
+    const rightHandLandmarks = results.leftHandLandmarks;
 
-    if(executando == true){
+    // Suponha que 'results' seja o objeto retornado pelo MediaPipe Pose com os pontos detectados
+
+    const MIN_CONFIDENCE = 0.5; // Limite mínimo de confiança para considerar um ponto como detectado
+
+    let numPointsDetected = 0;
+
+    if (Array.isArray(results.poseLandmarks)) {
+        for (const landmark of results.poseLandmarks) {
+            if (landmark.visibility >= MIN_CONFIDENCE) {
+                numPointsDetected++;
+            }
+        }
+    }
+
+    // Verificar se todos os 33 pontos foram detectados
+    if(!calibrado){
+        if (numPointsDetected === 30) {
+            Swal.fire({
+                title: 'Camera calibrada',
+                text: `É possível iniciar a sessão`,
+                icon: 'info',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    startButton.disabled = false
+                    const cameraExibe = document.getElementById("cameraExibe")
+                    cameraExibe.style.display = "none"
+                    calibrateButton.disabled = true;
+                    calibrado = true
+                }
+            });
+        } else {
+            console.log(`Apenas ${numPointsDetected} pontos foram detectados.`);
+        }
+    
+    }
+   
+    if (executando == true) {
         dadosArquivo.push(results)
     }
 
@@ -445,7 +543,7 @@ const buscarSessao = async () => {
                             <h5 style="font-size: 14px;">Intervalo</h5>
                             <p style="font-size: 12px; color: black;">${elemento.intervalo}</p>
                          </div>`;
-                         
+
                 lista.push(elemento)
             }
             timeline.innerHTML = html;
@@ -472,7 +570,7 @@ const runHolistic = async (lista) => {
     console.log(lista)
     for (let i = 0; i < lista.length; i++) {
         const partes = lista[i].exercicio.arquivo.split('/');
-        const relativePath = 'http://localhost:8082/'+partes[partes.length - 1];
+        const relativePath = 'http://localhost:8082/' + partes[partes.length - 1];
         console.log(relativePath)
         const urlArquivo1 = relativePath;
         let tempoRestante = lista[i].duracao;
@@ -480,7 +578,7 @@ const runHolistic = async (lista) => {
         let intervalo = lista[i].intervalo
         let velocidade = 1 / (lista[i].velocidade * 100)
         velocidade = velocidade * 5000
-        console.log(intervalo,tempoRestante)
+        console.log(intervalo, tempoRestante)
         // Função para ler o arquivo
         const lerArquivo = async (urlArquivo1) => {
             try {
@@ -500,7 +598,7 @@ const runHolistic = async (lista) => {
                 for (const objeto of conteudo) {
                     // Chama a função com o objeto atual
                     animateVRMAvatarAuxiliar(avatarAuxiliar, objeto);
-                    
+
 
                     // Aguarda um tempo antes de continuar para a próxima iteração
                     await new Promise(resolve => setTimeout(resolve, velocidade)); // Aguarda 10 milissegundos
@@ -526,20 +624,20 @@ const runHolistic = async (lista) => {
             }
 
             // Quando o tempo acabar, exibe um alerta
-            
+
         };
 
         const paraIntervalo = async () => {
             executando = false
             console.log(dadosArquivo)
             atualizarContador(intervalo, 2);
-        
+
             await new Promise((resolve) => {
                 const espera = setInterval(() => {
                     console.log("intervalo : " + intervalo);
                     intervalo--; // Decrementa o tempo restante
                     atualizarContador(intervalo, 2); // Atualiza o contador na tela
-        
+
                     if (intervalo <= 0) { // Se o tempo acabou
                         clearInterval(espera); // Interrompe o intervalo
                         resolve(); // Resolve a promessa para continuar a execução
@@ -549,29 +647,29 @@ const runHolistic = async (lista) => {
 
             exerciciosGuarda.push(dadosArquivo)
         }
-        
+
 
         // Função para atualizar o contador na tela
-        const atualizarContador = (tempoRestante,tipo) => {
-            if(tipo == 1){
+        const atualizarContador = (tempoRestante, tipo) => {
+            if (tipo == 1) {
                 document.getElementById("contador").textContent = `Tempo restante: ${tempoRestante} segundos`;
             }
-            else{
+            else {
                 document.getElementById("contador").textContent = `Intervalo restante: ${tempoRestante} segundos`;
             }
-            
+
         };
 
         // Função para executar o contador
         const executarContador = async () => {
             executando = true
             // Tempo inicial em segundos
-            atualizarContador(tempoRestante,1); // Atualiza o contador na tela
+            atualizarContador(tempoRestante, 1); // Atualiza o contador na tela
 
             // Intervalo para decrementar o tempo restante a cada segundo
             const intervalo = setInterval(() => {
                 tempoRestante--; // Decrementa o tempo restante
-                atualizarContador(tempoRestante,1); // Atualiza o contador na tela
+                atualizarContador(tempoRestante, 1); // Atualiza o contador na tela
 
                 if (tempoRestante <= 0) { // Se o tempo acabou
                     clearInterval(intervalo); // Interrompe o intervalo
@@ -596,34 +694,30 @@ const camera = new Camera(videoElement, {
     onFrame: async () => {
         await holistic.send({ image: videoElement });
     },
-    width: 1280,
-    height: 768,
+    width: 2825,
+    height: 1659,
 });
 camera.start();
 
 
-const startButton = document.getElementById("startButton");
 
-startButton.addEventListener("click", function() {
-    runHolistic(lista);
-});
 
-const calcularCadeias = () =>{
-    for(let lista of exerciciosGuarda){
-        for(let cadeia of lista){
-            if(cadeia.poseLandmarks != undefined){
+const calcularCadeias = () => {
+    for (let lista of exerciciosGuarda) {
+        for (let cadeia of lista) {
+            if (cadeia.poseLandmarks != undefined) {
                 cadeia1.push(cadeia.poseLandmarks)
             }
         }
     }
-    for(let lista of cadeia2){
-        for(let cadeia of lista){
-            if(cadeia.poseLandmarks != undefined){
+    for (let lista of cadeia2) {
+        for (let cadeia of lista) {
+            if (cadeia.poseLandmarks != undefined) {
                 cadeia3.push(cadeia.poseLandmarks)
             }
         }
     }
-    calcularSimilaridade(cadeia3,cadeia1)
+    calcularSimilaridade(cadeia3, cadeia1)
 
 }
 
@@ -662,7 +756,7 @@ function calcularSimilaridade(valor1, valor2) {
     for (let i = 0; i < valor2.length; i++) {
         const ponto1 = cadeia1Repetida[i];
         const ponto2 = valor2[i];
-        for(let j = 0;j<33;j++){
+        for (let j = 0; j < 33; j++) {
             const distancia = calcularDistanciaEuclidiana(ponto1[j], ponto2[j]);
             distanciaTotal += distancia;
         }

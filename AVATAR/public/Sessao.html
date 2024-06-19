@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-   
+
     <!-- Basic Three.js -->
     <script src="https://unpkg.com/three@0.133.0/build/three.js"></script>
     <!-- GLTF Loader for Three.js -->
@@ -23,67 +24,87 @@
     <!-- Your CSS file -->
     <link rel="stylesheet" href="style.css" />
 
-      <!-- SweetAlert2 -->
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        body {
-            background-color: #f8f9fa;
+        .preview {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            width: 1000px;
+            height: 80vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            z-index: 1000;
+            overflow: hidden;
         }
+
+        .preview video,
+        .preview canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .navbar {
-            margin-bottom: 16px; /* 80% de 20px */
+            margin-bottom: 16px;
         }
+
         .counter {
-            font-size: 3.2rem; /* 80% de 4rem */
-            color: #343a40;
+            font-size: 3.2rem;
+            color: white;
             font-weight: bold;
-            margin: 16px 0; /* 80% de 20px */
+            margin: 16px 0;
         }
+
         .timeline {
-            margin-top: 32px; /* 80% de 40px */
+            margin-top: 32px;
         }
+
         .timeline-item {
             background: #ffffff;
-            padding: 16px; /* 80% de 20px */
-            margin: 8px; /* 80% de 10px */
-            border-left: 4px solid #007bff; /* 80% de 5px */
-            box-shadow: 0 0.8px 2.4px rgba(0, 0, 0, 0.1); /* 80% de 1px */
+            padding: 16px;
+            margin: 8px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 0.8px 2.4px rgba(0, 0, 0, 0.1);
             flex: 1;
         }
+
         .timeline-item.interval {
             border-left-color: #28a745;
         }
-        .preview {
-            margin-top: 16px; /* 80% de 20px */
-            text-align: center;
-        }
-        .preview video {
-            width: 256px; /* 80% de 320px */
-            height: 256px; /* 80% de 320px */
+        
+        .conteudo {
+            background-color: #8B4513;
         }
     </style>
 </head>
+
 <body>
-
-    <div class="container mt-4 pt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-6 text-center">
-                <div id="contador" class="counter">00:00</div>
-                <button id="startButton" class="btn btn-primary">Iniciar</button>
-                <button id="resetButton" class="btn btn-secondary">Resetar</button>
+    <div class="conteudo">
+        <div class="container mt-4 pt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <div id="contador" class="counter">00:00</div>
+                    <button id="startButton" class="btn btn-primary">Iniciar</button>
+                    <button id="calibrateButton" class="btn btn-secondary">Calibrar</button>
+                </div>
             </div>
-        </div>
 
-        <div class="preview">
-            <video class="input_video" width="256px" height="256px" hidden="true" ></video>
-            <canvas class="guides"></canvas>
-            <section>
-                <a class="current" href="/"><p>VRM</p></a>  
-            </section>
-        </div>
-        <div id="timeline">
-
+            <div class="preview" id="cameraExibe">
+                <video class="input_video"></video>
+                <canvas class="guides"></canvas>
+            </div>
+            <div id="timeline"></div>
         </div>
     </div>
 
@@ -93,4 +114,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

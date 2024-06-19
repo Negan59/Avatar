@@ -12,7 +12,7 @@ public class DAOMonitor {
     public boolean salvar(Monitor u) {
         try {
             System.out.println("chega aqui?");
-            String sql = "insert into monitor (nome, email, ra_matricula, cpf,senha) values ('$1', '$2', '$3', '$4','$5')";
+            String sql = "insert into monitor (nome, email, ra_matricula, cpf,senha,nivel) values ('$1', '$2', '$3', '$4','$5',1)";
             sql = sql.replace("$1", u.getNome());
             sql = sql.replace("$2", u.getEmail());
             sql = sql.replace("$3", u.getRa());

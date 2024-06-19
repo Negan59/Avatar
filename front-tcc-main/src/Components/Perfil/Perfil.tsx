@@ -182,21 +182,6 @@ const Perfil: React.FC = () => {
                 </Col>
             </Row>
 
-            {/* Seção GMFCS */}
-            <div className="section centered">
-                <Title level={3}>GMFCS</Title>
-                {paciente?.gmfcs ? (
-                    <div>
-                        <Text><strong>Resultado:</strong> {paciente?.gmfcs}</Text>
-                        <Button onClick={handleShowGMFCSModal}>Editar</Button>
-                    </div>
-                ) : (
-                    <div>
-                        <Text>Nenhum resultado disponível.</Text>
-                        <Button onClick={handleShowGMFCSModal}>Iniciar Teste</Button>
-                    </div>
-                )}
-            </div>
 
             {/* Seção FMS */}
             <div className="section centered">

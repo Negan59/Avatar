@@ -47,6 +47,18 @@ const CriarSessaoFisioterapia = () => {
     const handleAddExercicio = () => {
         if (selectedExercicio) {
             const exercicio = exercicios.find(ex => ex.arquivo === selectedExercicio);
+            if(velocidade < 0){
+                alert("Velocidade inválida")
+                return;
+            }
+            if(duracao < 0){
+                alert("duração inválida")
+                return;
+            }
+            if(intervalo < 0){
+                alert("intervalo inválido")
+                return;
+            }
             setSessaoExercicios([...sessaoExercicios, { exercicio, velocidade, duracao, intervalo }]);
             setSelectedExercicio(null);
             setVelocidade(0);

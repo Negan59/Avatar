@@ -48,6 +48,7 @@ function App() {
     fetch('http://localhost:8080/api/monitor')
       .then((response) => response.json())
       .then((data) => {
+        console.log(data)
         setMonitores(data);
       })
       .catch((error) => {
