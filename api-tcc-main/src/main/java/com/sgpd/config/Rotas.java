@@ -11,6 +11,7 @@ import com.sgpd.control.ExercicioController;
 import com.sgpd.control.FMSController;
 import com.sgpd.control.MonitorController;
 import com.sgpd.control.PacienteController;
+import com.sgpd.control.ResultadoController;
 import com.sgpd.control.SessaoController;
 import com.sgpd.control.SessaoExercicioController;
 import com.sgpd.model.Erro;
@@ -18,8 +19,12 @@ import com.sgpd.model.Exercicio;
 import com.sgpd.model.FMS;
 import com.sgpd.model.Monitor;
 import com.sgpd.model.Paciente;
+import com.sgpd.model.Resultado;
 import com.sgpd.model.Sessao;
 import com.sgpd.model.SessaoExercicio;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -178,6 +183,16 @@ public class Rotas {
     @GetMapping("/sessao/ultima")
     public int buscarUltimo() {
         return new SessaoController().buscarUl();
+    }
+    
+    @PostMapping("/resultado")
+    public ResponseEntity<Object> salvarResultado(@RequestBody Resultado resultado) {
+        return new ResponseEntity<>(new ResultadoController().salvar(resultado),HttpStatus.OK);
+    }
+
+    @GetMapping("/resultado/paciente/{idpaciente}")
+    public ResponseEntity<Object> BuscarResultado(@PathVariable("idpaciente")int idpaciente) {
+        return new ResponseEntity<>(new ResultadoController().buscar(idpaciente),HttpStatus.OK);
     }
     
     

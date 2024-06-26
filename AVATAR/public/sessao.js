@@ -721,6 +721,30 @@ const calcularCadeias = () => {
 
 }
 
+const salvarResultado = async (resultado) => {
+    try {
+        console.log(resultado)
+        const response = await fetch('http://localhost:8080/api/resultado', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(resultado)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erro ao salvar resultado: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('Resultado salvo com sucesso:', data);
+        return data;
+    } catch (error) {
+        console.error('Erro:', error);
+        return null;
+    }
+};
+
 // Função para calcular a porcentagem de similaridade entre duas cadeias de pontos tridimensionais
 function calcularSimilaridade(valor1, valor2) {
 
@@ -773,6 +797,8 @@ function calcularSimilaridade(valor1, valor2) {
         icon: 'info',
         confirmButtonText: 'OK'
     }).then((result) => {
+        let resultadoo = {sessao:{id:id},porcentagem:porcentagemSimilaridade.toFixed(2)}
+        salvarResultado(resultadoo)
         if (result.isConfirmed) {
             window.location.href = "http://localhost:3000/exibir-sessao";
         }

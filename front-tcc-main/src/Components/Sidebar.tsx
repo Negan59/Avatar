@@ -13,6 +13,7 @@ import {
 import { Link } from 'react-router-dom';
 
 import '../Styles/app.css';
+import { PlaceholderButton } from 'react-bootstrap';
 const { SubMenu } = Menu;
 const { Sider } = Layout;
 
@@ -60,6 +61,9 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false }) => {
         </Menu.Item>
         <Menu.Item key="create-session" icon={<PlusCircleOutlined />}>
           <Link to="/criar-sessao">Criar Sessão</Link>
+        </Menu.Item>
+        <Menu.Item key="relatorio" icon={<PlusCircleOutlined />}>
+          <Link to="/relatorio">Relatorio</Link>
         </Menu.Item>
       </Menu>
     </Sider>
