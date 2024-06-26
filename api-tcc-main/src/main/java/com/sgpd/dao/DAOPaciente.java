@@ -118,7 +118,10 @@ public class DAOPaciente {
         ArrayList<Paciente> pacientes = new ArrayList<>();
         SingletonConexao con = SingletonConexao.getConexao();
         try {
-            String sql = "SELECT * FROM paciente ORDER BY nome ASC";
+            String sql = "SELECT DISTINCT pa.* FROM paciente pa"+
+                          " LEFT JOIN fms f ON f.paciente_id = pa.id"+
+                          " WHERE f.paciente_id IS NOT NULL"+
+                          " ORDER BY nome ASC";
             
             
             ResultSet rs = con.consultar(sql);

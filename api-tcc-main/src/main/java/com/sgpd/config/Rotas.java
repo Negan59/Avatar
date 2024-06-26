@@ -138,6 +138,11 @@ public class Rotas {
         return new ResponseEntity<>(new ExercicioController().buscarTodos(), HttpStatus.OK);
     }
 
+    @GetMapping("/exercicio/buscar/{id}")
+    public ResponseEntity<Object> buscarExercicioTodosPorPaciente(@PathVariable("id")int id) {
+        return new ResponseEntity<>(new ExercicioController().buscarTodosPorPaciente(id), HttpStatus.OK);
+    }
+
     //sessão
     @PostMapping("/sessao")
     public ResponseEntity<Object> SalvarSessao(@RequestBody Sessao sessao) {

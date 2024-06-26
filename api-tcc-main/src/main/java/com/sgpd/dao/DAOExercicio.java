@@ -82,4 +82,32 @@ public class DAOExercicio {
 
        return exercicios;
    }
+
+   public List<Exercicio> buscarTodosPaciente(int nivel1,int nivel2,int nivel3){
+    ArrayList<Exercicio> exercicios = new ArrayList<>();
+    try {
+       String sql = "SELECT * FROM exercicio WHERE (tipo = 1 AND grau >= "+nivel1+") OR (tipo = 2 AND grau>= "+nivel2+") OR (tipo = 3 AND grau>= "+nivel3+")";
+       
+       
+       SingletonConexao con = SingletonConexao.getConexao();
+       ResultSet rs = con.consultar(sql);
+
+       while(rs.next()) {
+           Exercicio exercicio = new Exercicio();
+           exercicio.setId(rs.getLong("id"));
+           exercicio.setNome(rs.getString("nome"));
+           exercicio.setGrau(rs.getString("grau"));
+           exercicio.setTipo(rs.getString("tipo"));
+           exercicio.setArquivo(rs.getString("arquivo"));
+           
+           exercicios.add(exercicio);
+       }
+       
+
+   } catch (Exception e) {
+       e.printStackTrace();
+   }
+
+   return exercicios;
+}
 }

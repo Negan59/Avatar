@@ -11,6 +11,7 @@ import java.util.Random;
 
 import com.sgpd.model.Erro;
 import com.sgpd.model.Exercicio;
+import com.sgpd.model.FMS;
 
 public class ExercicioController {
     private static final String CARACTERES_PERMITIDOS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -67,4 +68,22 @@ public class ExercicioController {
         Exercicio exercicio = new Exercicio();
         return exercicio.buscarTodos();
     }
+
+    public List<Exercicio> buscarTodosPorPaciente(int id) {
+        Exercicio exercicio = new Exercicio();
+        FMS fms = new FMS();
+    
+        List<FMS> lista = fms.buscar(id);
+        
+        // Assumindo que a lista sempre tem 3 elementos
+        int nivel1 = lista.get(0).getNivel();
+        int nivel2 = lista.get(1).getNivel();
+        int nivel3 = lista.get(2).getNivel();
+    
+        // Agora você pode usar as variáveis nivel1, nivel2, e nivel3 conforme necessário
+        
+        return exercicio.buscarTodosPaciente(nivel1,nivel2,nivel3);
+    }    
+
+
 }

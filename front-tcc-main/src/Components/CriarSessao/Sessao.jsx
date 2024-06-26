@@ -17,12 +17,12 @@ const CriarSessaoFisioterapia = () => {
     const [intervalo, setIntervalo] = useState(0);
 
     useEffect(() => {
-        fetchExercicios();
         fetchPacientes();
     }, []);
 
     const fetchExercicios = () => {
-        fetch('http://localhost:8080/api/exercicio/buscar') 
+        console.log(selectedPaciente)
+        fetch('http://localhost:8080/api/exercicio/buscar/'+selectedPaciente) 
             .then((response) => response.json())
             .then((data) => {
                 console.log(data)
@@ -124,6 +124,16 @@ const CriarSessaoFisioterapia = () => {
         // Lógica para iniciar a sessão
     };
 
+    useEffect(() => {
+        if (selectedPaciente !== null) {
+          fetchExercicios();
+        }
+      }, [selectedPaciente]);
+
+    const handleChange = (value) => {
+        setSelectedPaciente(value);
+      };
+
     return (
         <div>
             <h1 className="mt-4 mb-4">Criar Sessão de Fisioterapia</h1>
@@ -137,7 +147,7 @@ const CriarSessaoFisioterapia = () => {
                 </Form.Item>
                 <Form.Item label="Paciente">
                     <Select 
-                        onChange={(value) => setSelectedPaciente(value)}
+                        onChange={handleChange}
                         disabled={sessaoExercicios.length > 0}
                         value={selectedPaciente || ''}
                     >

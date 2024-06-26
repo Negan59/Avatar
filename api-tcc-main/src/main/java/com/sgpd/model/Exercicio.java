@@ -62,4 +62,9 @@ public class Exercicio {
         DAOExercicio dao = new DAOExercicio();
         return dao.buscarTodos();
     }
+
+    public List<Exercicio> buscarTodosPaciente(int nivel1,int nivel2,int nivel3){
+        DAOExercicio dao = new DAOExercicio();
+        return dao.buscarTodosPaciente(nivel1,nivel2,nivel3);
+    }
 }
