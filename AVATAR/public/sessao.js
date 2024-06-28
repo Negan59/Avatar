@@ -27,7 +27,7 @@ document.body.appendChild(renderer.domElement);
 
 // camera
 const orbitCamera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
-orbitCamera.position.set(0.0, 0.6, 4);
+orbitCamera.position.set(-1.2, 0.6, 4);
 
 const startButton = document.getElementById("startButton");
 startButton.disabled = true
@@ -37,9 +37,9 @@ startButton.addEventListener("click", function () {
 });
 
 const calibrateButton = document.getElementById("calibrateButton")
-calibrateButton.addEventListener("click",function(){
+calibrateButton.addEventListener("click", function () {
     const cameraExibe = document.getElementById("cameraExibe")
-    cameraExibe.style.display = "flex"
+   cameraExibe.style.display = "flex"
 })
 
 // scene
@@ -48,16 +48,10 @@ scene.background = new THREE.Color(0x8B4513); // Marrom como cor de fundo
 
 scene.scale.set(0.7, 0.7, 0.7);
 
-// Criando um plano (chão)
-const groundGeometry = new THREE.PlaneGeometry(10, 10); // Dimensões do plano
-const groundMaterial = new THREE.MeshBasicMaterial({ color: 0x996633 }); // Marrom claro como cor do chão
-const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-ground.rotation.x = -Math.PI / 2; // Rotaciona o plano para que ele fique no chão
-scene.add(ground);
 
 // light
 const light = new THREE.DirectionalLight(0xffffff);
-light.position.set(1.0, 1.0, 1.0).normalize();
+light.position.set(1.0, 1.0, 3).normalize();
 scene.add(light);
 
 // Main Render Loop
@@ -81,15 +75,30 @@ const loader = new THREE.GLTFLoader();
 const loader2 = new THREE.GLTFLoader();
 loader.crossOrigin = "anonymous";
 loader2.crossOrigin = "anonymous"
+
+loader.load('hospital_lounge.glb', function (gltf) {
+    const model = gltf.scene;
+    
+    // Adiciona o modelo à cena
+    scene.add(model);
+    
+    // Ajusta a escala do modelo
+    model.scale.set(2.2, 2.2, 2); // Exemplo de ajuste de escala, altere os valores conforme necessário
+    
+    // Opcional: centralizar ou reposicionar o modelo, se necessário
+    model.position.set(0, 0, 0);
+}, undefined, function (error) {
+    console.error(error);
+});
 // Import model from URL, add your own model here
-loader.load(
+await loader.load(
     "avatarFeminino.vrm",
 
     (gltf) => {
         THREE.VRMUtils.removeUnnecessaryJoints(gltf.scene);
 
         THREE.VRM.from(gltf).then((vrm) => {
-            vrm.scene.position.set(0.5, fixedYPosition, 0);
+            vrm.scene.position.set(-1, 0, 0);
             scene.add(vrm.scene);
             currentVrm = vrm;
             currentVrm.scene.rotation.y = Math.PI; // Rotate model 180deg to face camera
@@ -101,7 +110,7 @@ loader.load(
     (error) => console.error(error)
 );
 
-loader2.load(
+await loader2.load(
     "avatarGuia.vrm",
 
     (gltf) => {
@@ -109,7 +118,7 @@ loader2.load(
 
         THREE.VRM.from(gltf).then((vrm) => {
 
-            vrm.scene.position.set(-1, fixedYPosition, 0);
+            vrm.scene.position.set(-2.9, 0, 0);
             scene.add(vrm.scene);
             avatarAuxiliar = vrm;
             avatarAuxiliar.scene.rotation.y = Math.PI; // Rotate model 180deg to face camera
@@ -342,7 +351,7 @@ const animateVRM = (vrm, results) => {
     }
 
     // Verificar se todos os 33 pontos foram detectados
-    if(!calibrado){
+    if (!calibrado) {
         if (numPointsDetected === 30) {
             Swal.fire({
                 title: 'Camera calibrada',
@@ -361,9 +370,9 @@ const animateVRM = (vrm, results) => {
         } else {
             console.log(`Apenas ${numPointsDetected} pontos foram detectados.`);
         }
-    
+
     }
-   
+
     if (executando == true) {
         dadosArquivo.push(results)
     }
@@ -430,7 +439,7 @@ const animateVRMAvatarAuxiliar = (vrm, results) => {
     const leftHandLandmarks = results.rightHandLandmarks;
     const rightHandLandmarks = results.leftHandLandmarks;
 
-    
+
 
     // Animate Face
     if (faceLandmarks) {
@@ -797,7 +806,7 @@ function calcularSimilaridade(valor1, valor2) {
         icon: 'info',
         confirmButtonText: 'OK'
     }).then((result) => {
-        let resultadoo = {sessao:{id:id},porcentagem:porcentagemSimilaridade.toFixed(2)}
+        let resultadoo = { sessao: { id: id }, porcentagem: porcentagemSimilaridade.toFixed(2) }
         salvarResultado(resultadoo)
         if (result.isConfirmed) {
             window.location.href = "http://localhost:3000/exibir-sessao";

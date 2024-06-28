@@ -138,14 +138,14 @@ const CriarSessaoFisioterapia = () => {
         <div>
             <h1 className="mt-4 mb-4">Criar Sessão de Fisioterapia</h1>
             <Form>
-                <Form.Item label="Nome da Sessão">
+            <Form.Item label={<span style={{ fontWeight: 'bold' }}>Nome da Sessão</span>}>
                     <Input 
                         value={nomeSessao} 
                         onChange={(e) => setNomeSessao(e.target.value)} 
                         disabled={sessaoExercicios.length > 0}
                     />
                 </Form.Item>
-                <Form.Item label="Paciente">
+                <Form.Item label={<span style={{ fontWeight: 'bold' }}>Paciente</span>}>
                     <Select 
                         onChange={handleChange}
                         disabled={sessaoExercicios.length > 0}
@@ -159,7 +159,7 @@ const CriarSessaoFisioterapia = () => {
                         ))}
                     </Select>
                 </Form.Item>
-                <Form.Item label="Exercício">
+                <Form.Item label={<span style={{ fontWeight: 'bold' }}>Exercício</span>}>
                     <Select value={selectedExercicio || ''} onChange={(value) => setSelectedExercicio(value)}>
                         <Option value="">Selecione um exercício</Option>
                         {exercicios.map(exercicio => (
@@ -183,17 +183,17 @@ const CriarSessaoFisioterapia = () => {
                 )}
                 <Row>
                     <Col>
-                        <Form.Item label="Velocidade">
+                        <Form.Item label={<span style={{ fontWeight: 'bold' }}>Velocidade</span>}>
                             <Input type="number" step="0.5" value={velocidade} onChange={(e) => setVelocidade(e.target.value)} />
                         </Form.Item>
                     </Col>
                     <Col>
-                        <Form.Item label="Duração">
+                        <Form.Item label={<span style={{ fontWeight: 'bold' }}>Duração</span>}>
                             <Input type="number" step="1" value={duracao} onChange={(e) => setDuracao(e.target.value)} />
                         </Form.Item>
                     </Col>
                     <Col>
-                        <Form.Item label="Intervalo">
+                        <Form.Item label={<span style={{ fontWeight: 'bold' }}>Intervalo</span>}>
                             <Input type="number" step="1" value={intervalo} onChange={(e) => setIntervalo(e.target.value)} />
                         </Form.Item>
                     </Col>

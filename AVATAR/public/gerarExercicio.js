@@ -34,14 +34,8 @@ orbitCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
 // scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x8B4513); // Marrom como cor de fundo
 
-// Criando um plano (chão)
-const groundGeometry = new THREE.PlaneGeometry(10, 10); // Dimensões do plano
-const groundMaterial = new THREE.MeshBasicMaterial({ color: 0x996633 }); // Marrom claro como cor do chão
-const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-ground.rotation.x = -Math.PI / 2; // Rotaciona o plano para que ele fique no chão
-scene.add(ground);
+
 
 
 // light
@@ -71,6 +65,20 @@ const loader2 = new THREE.GLTFLoader();
 loader.crossOrigin = "anonymous";
 loader2.crossOrigin = "anonymous"
 // Import model from URL, add your own model here
+loader.load('hospital_lounge.glb', function (gltf) {
+    const model = gltf.scene;
+    
+    // Adiciona o modelo à cena
+    scene.add(model);
+    
+    // Ajusta a escala do modelo
+    model.scale.set(1, 1, 2); // Exemplo de ajuste de escala, altere os valores conforme necessário
+    
+    // Opcional: centralizar ou reposicionar o modelo, se necessário
+    model.position.set(0, 0, 0);
+}, undefined, function (error) {
+    console.error(error);
+});
 loader.load(
     "avatarGuia.vrm",
 
@@ -372,12 +380,6 @@ const onResults = async(results) => {
 
 // Draw landmarks and connect them
 const drawResults = (results) => {
-    guideCanvas.width = videoElement.videoWidth;
-    guideCanvas.height = videoElement.videoHeight;
-
-    const canvasCtx = guideCanvas.getContext("2d");
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, guideCanvas.width, guideCanvas.height);
 
     // Use `Mediapipe` drawing functions
     drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
@@ -573,8 +575,7 @@ const salvar = async () => {
         return;
     }
 
-    // Exibir gif de carregamento
-    document.getElementById('loadingGif').style.display = 'block';
+
 
     // Simular salvamento
     await new Promise(resolve => setTimeout(resolve, 2000)); // Simulação de operação assíncrona

@@ -32,22 +32,11 @@ a:link:hover {
     color: #13a3f3;
     cursor: pointer;
 }
-.preview {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    bottom: 16px;
-    right: 16px;
-    overflow: hidden;
-    border-radius: 8px;
-    background: #222;
-}
-video {
-    max-width: 400px;
-    height: auto;
+
+.preview canvas {
     transform: scale(-1, 1);
 }
-.preview canvas {
+.input_video{
     transform: scale(-1, 1);
 }
 body {
@@ -55,12 +44,13 @@ body {
 }
 canvas {
     display: block;
+    height: 100%;
 }
 .guides {
     position: absolute;
     bottom: 0;
     left: 0;
-    height: auto;
+    height: 100%;
     width: 100%;
     z-index: 1;
 }
@@ -96,17 +86,7 @@ p {
         sans-serif;
     margin: 0;
 }
-.preview a {
-    border-radius: 24px;
-    margin: 0 4px;
-}
-.preview a:hover {
-    background: #ffffff20;
-}
-a.current {
-    background: #13a3f3;
-    pointer-events: none;
-}
+
 
 .linkOut {
     position: absolute;

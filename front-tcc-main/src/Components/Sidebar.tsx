@@ -4,11 +4,11 @@ import {
   HomeOutlined,
   DesktopOutlined,
   ControlOutlined,
-  PlayCircleOutlined,
-  UserOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  FileOutlined,
   TeamOutlined,
-  PlusCircleOutlined,
-  EyeFilled, // Importe o ícone PlusCircleOutlined
+  UserOutlined,
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 
@@ -52,18 +52,17 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed = false }) => {
         <Menu.Item key="admin" icon={<ControlOutlined />}>
           <Link to="/adm">Painel do Administrador</Link>
         </Menu.Item>
-        <Menu.Item key="session" icon={<EyeFilled />}>
-        <Link to="/exibir-sessao">Exibir Sessão</Link>
+        <Menu.Item key="session" icon={<EyeOutlined />}>
+          <Link to="/exibir-sessao">Exibir Sessão</Link>
         </Menu.Item>
-        {/* Elemento "Criar Exercício" com ícone */}
-        <Menu.Item key="create-exercise" icon={<PlusCircleOutlined />}>
+        <Menu.Item key="create-exercise" icon={<PlusOutlined />}>
           <Link to="/criar-exercicio">Criar Exercício</Link>
         </Menu.Item>
-        <Menu.Item key="create-session" icon={<PlusCircleOutlined />}>
+        <Menu.Item key="create-session" icon={<PlusOutlined />}>
           <Link to="/criar-sessao">Criar Sessão</Link>
         </Menu.Item>
-        <Menu.Item key="relatorio" icon={<PlusCircleOutlined />}>
-          <Link to="/relatorio">Relatorio</Link>
+        <Menu.Item key="relatorio" icon={<FileOutlined />}>
+          <Link to="/relatorio">Relatório</Link>
         </Menu.Item>
       </Menu>
     </Sider>

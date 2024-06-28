@@ -20,8 +20,8 @@ document.body.appendChild(renderer.domElement);
 
 // camera
 const orbitCamera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
-orbitCamera.position.set(0.0, 1.3, 6);
-orbitCamera.lookAt(new THREE.Vector3(0, 0, 0));
+orbitCamera.position.set(0.0,1, 4);
+
 
 
 
@@ -64,6 +64,21 @@ const loader2 = new THREE.GLTFLoader();
 loader.crossOrigin = "anonymous";
 loader2.crossOrigin = "anonymous"
 // Import model from URL, add your own model here
+
+loader.load('hospital_lounge.glb', function (gltf) {
+    const model = gltf.scene;
+    
+    // Adiciona o modelo à cena
+    scene.add(model);
+    
+    // Ajusta a escala do modelo
+    model.scale.set(1, 1, 1); // Exemplo de ajuste de escala, altere os valores conforme necessário
+    
+    // Opcional: centralizar ou reposicionar o modelo, se necessário
+    model.position.set(0, 0, 0);
+}, undefined, function (error) {
+    console.error(error);
+});
 loader.load(
     "avatarGuia.vrm",
 
@@ -71,7 +86,7 @@ loader.load(
         THREE.VRMUtils.removeUnnecessaryJoints(gltf.scene);
 
         THREE.VRM.from(gltf).then((vrm) => {
-            vrm.scene.position.set(0, fixedYPosition, 0);
+            vrm.scene.position.set(0, 0, 0);
             scene.add(vrm.scene);
             currentVrm = vrm;
             currentVrm.scene.rotation.y = Math.PI; // Rotate model 180deg to face camera
